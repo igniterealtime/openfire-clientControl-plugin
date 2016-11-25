@@ -400,15 +400,9 @@ public class SparkManager implements Component {
         }
 
         // Check for HISTORY SETTINGS feature
-        boolean historysettingsEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("historysettings.enabled", "true"));
-        if (historysettingsEnabled) {
+        boolean historyEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("history.enabled", "true"));
+        if (historyEnabled) {
             responseElement.addElement("feature").addAttribute("var", "history-settings");
-        }
-
-        // Check for HISTORY TRANSCRIPTS feature
-        boolean historytranscriptsEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("historytranscripts.enabled", "true"));
-        if (historytranscriptsEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "history-transcripts");
         }
 
         // Check for HOST NAME CHANGE feature
@@ -421,12 +415,6 @@ public class SparkManager implements Component {
         boolean invisibleloginEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("invisiblelogin.enabled", "true"));
         if (invisibleloginEnabled) {
             responseElement.addElement("feature").addAttribute("var", "invisible-login");
-        }
-        
-        // Check for LOGIN ANONYMOUSLY feature        
-        boolean anonymousloginEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("anonymouslogin.enabled", "true"));
-        if (anonymousloginEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "anonymous-login");
         }
 
         // Check for LOGOUT & EXIT feature
@@ -468,13 +456,13 @@ public class SparkManager implements Component {
         // Check for PREFERENCES MENU feature        
         boolean preferencesEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("preferences.enabled", "true"));
         if (preferencesEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "preferences-menu");
+        	responseElement.addElement("feature").addAttribute("var", "preferences-menu");
         }
 
         // Check for PRESENCE STATUS CHANGE feature        
         boolean presenceEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("presence.enabled", "true"));
         if (presenceEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "presence-status");
+        	responseElement.addElement("feature").addAttribute("var", "presence-status");
         }
 
         // Check for PROFILE & AVATAR EDITING feature
@@ -498,19 +486,13 @@ public class SparkManager implements Component {
         // Check for VIEW NOTES feature        
         boolean viewnotesEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("viewnotes.enabled", "true"));
         if (viewnotesEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "view-notes");
+        	responseElement.addElement("feature").addAttribute("var", "view-notes");
         }
 
         // Check for VIEW TASK LIST feature        
         boolean viewtasklistEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("viewtasklist.enabled", "true"));
         if (viewtasklistEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "view-tasks");
-        }
-        
-        // Check for START A CHAT feature        
-        boolean startachatEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("startachat.enabled", "true"));
-        if (startachatEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "start-a-chat");
+        	responseElement.addElement("feature").addAttribute("var", "view-tasks");
         }
 
     }
