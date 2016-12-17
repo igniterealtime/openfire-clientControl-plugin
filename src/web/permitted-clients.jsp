@@ -79,14 +79,12 @@
     boolean remove = request.getParameter("removeClient") != null;
     Cookie csrfCookie = CookieUtils.getCookie(request, "csrf");
     String csrfParam = ParamUtils.getParameter(request, "csrf");
-    boolean csrfStatus = true;
 
     if (submit || addOther || remove) {
         if (csrfCookie == null || csrfParam == null || !csrfCookie.getValue().equals(csrfParam)) {
             submit = false;
             addOther = false;
             remove = false;
-            csrfStatus = false;
         }
     }
     csrfParam = StringUtils.randomString(16);
@@ -301,7 +299,7 @@
 
             <strong><fmt:message key="permitted.client.add.other.client" />:</strong>
             <a onmouseover="domTT_activate(this, event, 'content', '<fmt:message key="permitted.client.tooltip" />', 'trail', true, 'direction', 'northeast', 'width', '220');"><img src="images/icon_help_14x14.gif" align="texttop" /></a><br>
-            <input type="text" name="other" style="width: 160px;">&nbsp;<input type="hidden" value="${csrf}" name="csrf"><input type="submit" name="addOther" value="<fmt:message key="permitted.client.add" />"/><br>
+			<input type="text" name="other" style="width: 160px;">&nbsp;<input type="hidden" value="${csrf}" name="csrf"><input type="submit" name="addOther" value="<fmt:message key="permitted.client.add" />"/><br>
             <% for (String otherClient : otherClients) { %>
                 <%= otherClient%>&nbsp(<a href="permitted-clients.jsp?csrf=${csrf}&removeClient=<%=StringUtils.escapeForXML(otherClient)%>" name="removeClient" id="<%= StringUtils.escapeForXML(otherClient) %>"><fmt:message key="permitted.client.remove" /></a>)<br>
             <% } %>
