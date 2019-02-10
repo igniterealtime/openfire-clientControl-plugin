@@ -328,7 +328,7 @@ public class SparkManager implements Component {
     }
 
     /**
-     * Builds an element list of all features enabled.
+     * Builds an element list of all features (enabled or disabled).
      *
      * @param responseElement the feature response element.
      */
@@ -511,6 +511,18 @@ public class SparkManager implements Component {
         boolean startachatEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("startachat.enabled", "true"));
         if (startachatEnabled) {
             responseElement.addElement("feature").addAttribute("var", "start-a-chat");
+        }
+
+        // Check for HOSTNAME AS RESOURCE feature
+        boolean hostnameasresourceEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("hostnameasresource.enabled", "false"));
+        if (hostnameasresourceEnabled) {
+            responseElement.addElement("feature").addAttribute("var", "hostname-as-resource");
+        }
+
+        // Check for VERSION AS RESOURCE feature
+        boolean versionasresourceEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("versionasresource.enabled", "false"));
+        if (versionasresourceEnabled) {
+            responseElement.addElement("feature").addAttribute("var", "version-as-resource");
         }
 
     }
