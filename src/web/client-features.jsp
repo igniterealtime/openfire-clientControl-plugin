@@ -53,6 +53,8 @@
     String viewnotesEnabledString = JiveGlobals.getProperty("viewnotes.enabled", "true");
     String viewtasklistEnabledString = JiveGlobals.getProperty("viewtasklist.enabled", "true");
     String startachatEnabledString = JiveGlobals.getProperty("startachat.enabled", "true");
+    String hostnameasresourceEnabledString = JiveGlobals.getProperty("hostnameasresource.enabled", "false");
+    String versionasresourceEnabledString = JiveGlobals.getProperty("versionasresource.enabled", "false");
 
     boolean submit = request.getParameter("submit") != null;
 
@@ -98,6 +100,8 @@
         viewnotesEnabledString = request.getParameter("viewnotesEnabled");
         viewtasklistEnabledString = request.getParameter("viewtasklistEnabled");
         startachatEnabledString = request.getParameter("startachatEnabled");
+        hostnameasresourceEnabledString = request.getParameter("hostnameasresourceEnabled");
+        versionasresourceEnabledString = request.getParameter("versionasresourceEnabled");
 
         JiveGlobals.setProperty("accounts.enabled", accountsEnabledString);
         JiveGlobals.setProperty("addcontacts.enabled", addcontactsEnabledString);
@@ -128,6 +132,8 @@
         JiveGlobals.setProperty("viewnotes.enabled", viewnotesEnabledString);
         JiveGlobals.setProperty("viewtasklist.enabled", viewtasklistEnabledString);
         JiveGlobals.setProperty("startachat.enabled", startachatEnabledString);
+        JiveGlobals.setProperty("hostnameasresource.enabled", hostnameasresourceEnabledString);
+        JiveGlobals.setProperty("versionasresource.enabled", versionasresourceEnabledString);
     }
     
     boolean accountsEnabled = Boolean.parseBoolean(accountsEnabledString);
@@ -159,6 +165,8 @@
     boolean viewnotesEnabled = Boolean.parseBoolean(viewnotesEnabledString);
     boolean viewtasklistEnabled = Boolean.parseBoolean(viewtasklistEnabledString);
     boolean startachatEnabled = Boolean.parseBoolean(startachatEnabledString);
+    boolean hostnameasresourceEnabled = Boolean.parseBoolean(hostnameasresourceEnabledString);
+    boolean versionasresourceEnabled = Boolean.parseBoolean(versionasresourceEnabledString);
         
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
@@ -365,16 +373,6 @@
                     <input type="radio" name="hostnameEnabled" value="false" <%= !hostnameEnabled ? "checked" : "" %> />
                 </td>
             </tr>
-        </table>
-    </div>
-            
-<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
-            
-    <div style="display:inline-block;width:600px;margin:10px;">
-        <table class="jive-table" cellspacing="0" width="600">
-            <th><fmt:message key="client.feature"/></th>
-            <th><fmt:message key="client.features.enabled"/></th>
-            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.invisiblelogin" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.invisiblelogin.description" />
@@ -386,6 +384,16 @@
                     <input type="radio" name="invisibleloginEnabled" value="false" <%= !invisibleloginEnabled ? "checked" : "" %> />
                 </td>
             </tr>
+        </table>
+    </div>
+            
+<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
+            
+    <div style="display:inline-block;width:600px;margin:10px;">
+        <table class="jive-table" cellspacing="0" width="600">
+            <th><fmt:message key="client.feature"/></th>
+            <th><fmt:message key="client.features.enabled"/></th>
+            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.anonymouslogin" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.anonymouslogin.description" />
@@ -527,6 +535,28 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="viewtasklistEnabled" value="false" <%= !viewtasklistEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.hostnameasresource" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.hostnameasresource.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="hostnameasresourceEnabled" value="true" <%= hostnameasresourceEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="hostnameasresourceEnabled" value="false" <%= !hostnameasresourceEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.versionasresource" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.versionasresource.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="versionasresourceEnabled" value="true" <%= versionasresourceEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="versionasresourceEnabled" value="false" <%= !versionasresourceEnabled ? "checked" : "" %> />
                 </td>
             </tr>
         </table>
