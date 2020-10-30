@@ -12,15 +12,6 @@
     <name>ClientControl Plugin</name>
     <description>Controls clients allowed to connect and available features</description>
 
-    <repositories>
-        <!-- Where we obtain dependencies. -->
-        <repository>
-            <id>igniterealtime</id>
-            <name>Ignite Realtime Repository</name>
-            <url>https://igniterealtime.org/archiva/repository/maven/</url>
-        </repository>
-    </repositories>
-
     <build>
         <sourceDirectory>src/java</sourceDirectory>
         <plugins>
