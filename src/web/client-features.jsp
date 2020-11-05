@@ -6,6 +6,9 @@
 <%@ page import="org.jivesoftware.util.CookieUtils" %>
 <%@ page import="org.jivesoftware.openfire.XMPPServer" %>
 <%@ page import="org.jivesoftware.openfire.plugin.ClientControlPlugin" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -103,6 +106,14 @@
         hostnameasresourceEnabledString = request.getParameter("hostnameasresourceEnabled");
         versionasresourceEnabledString = request.getParameter("versionasresourceEnabled");
 
+        final List<String> blackListedPlugins = new ArrayList<>();
+        if ( !Boolean.parseBoolean( request.getParameter("sparkPluginReversiEnabled")) ) {
+            blackListedPlugins.add("Reversi");
+        }
+        if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTicTacToeEnabled")) ) {
+            blackListedPlugins.add("TicTacToe");
+        }
+
         JiveGlobals.setProperty("accounts.enabled", accountsEnabledString);
         JiveGlobals.setProperty("addcontacts.enabled", addcontactsEnabledString);
         JiveGlobals.setProperty("addgroups.enabled", addgroupsEnabledString);
@@ -134,6 +145,7 @@
         JiveGlobals.setProperty("startachat.enabled", startachatEnabledString);
         JiveGlobals.setProperty("hostnameasresource.enabled", hostnameasresourceEnabledString);
         JiveGlobals.setProperty("versionasresource.enabled", versionasresourceEnabledString);
+        JiveGlobals.setProperty("sparkplugin.blacklist", blackListedPlugins);
     }
     
     boolean accountsEnabled = Boolean.parseBoolean(accountsEnabledString);
@@ -167,7 +179,11 @@
     boolean startachatEnabled = Boolean.parseBoolean(startachatEnabledString);
     boolean hostnameasresourceEnabled = Boolean.parseBoolean(hostnameasresourceEnabledString);
     boolean versionasresourceEnabled = Boolean.parseBoolean(versionasresourceEnabledString);
-        
+
+    final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
+    boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
+    boolean sparkPluginTicTacToeEnabled = !blacklistedPlugins.contains("TicTacToe");
+
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
             .getPluginManager().getPlugin("clientcontrol");
@@ -557,6 +573,28 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="versionasresourceEnabled" value="false" <%= !versionasresourceEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginReversiEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginReversiEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginReversiEnabled" value="true" <%= sparkPluginReversiEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginReversiEnabled" value="false" <%= !sparkPluginReversiEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginTicTacToeEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginTicTacToeEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginTicTacToeEnabled" value="true" <%= sparkPluginTicTacToeEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginTicTacToeEnabled" value="false" <%= !sparkPluginTicTacToeEnabled ? "checked" : "" %> />
                 </td>
             </tr>
         </table>

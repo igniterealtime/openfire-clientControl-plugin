@@ -16,10 +16,7 @@
 
 package org.jivesoftware.openfire.plugin.spark;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.dom4j.Element;
@@ -74,6 +71,8 @@ public class SparkManager implements Component {
      * Defined Service Name for Component.
      */
     private String serviceName = "manager";
+
+    private final String[] supportedDiscoInfoNodes = new String[] {"spark-plugins-blacklist"};
 
     /**
      * Creates a new instance of the SparkManager to allow for listening and responding to
@@ -293,9 +292,49 @@ public class SparkManager implements Component {
      * @param packet the packet.
      */
     private void handleDiscoItems(IQ packet) {
+        final String requestedNode = packet.getChildElement().attributeValue("node");
+
         IQ replyPacket = IQ.createResultIQ(packet);
-        replyPacket.setChildElement("query", "http://jabber.org/protocol/disco#items");
+        final Element responseElement = replyPacket.setChildElement("query", "http://jabber.org/protocol/disco#items");
+        if (requestedNode == null) {
+            // Respond with the nodes that are available.
+            for( final String supportedDiscoInfoNode : supportedDiscoInfoNodes ) {
+                responseElement.addElement("item")
+                    .addAttribute("jid", packet.getTo().toString())
+                    .addAttribute("node", supportedDiscoInfoNode);
+            }
+        } else {
+            // Respond with node-specific data.
+            responseElement.addAttribute("node", requestedNode);
+            if (!Arrays.asList(supportedDiscoInfoNodes).contains(requestedNode)) {
+                replyPacket.setError(PacketError.Condition.item_not_found);
+            } else {
+                buildNodeResponse(packet.getTo(), responseElement, requestedNode);
+            }
+        }
         sendPacket(replyPacket);
+    }
+
+    /**
+     * Adds item nodes
+     * @param jid
+     * @param responseElement
+     * @param requestedNode
+     */
+    private void buildNodeResponse(final JID jid, final Element responseElement, String requestedNode) {
+        switch (requestedNode) {
+            case "spark-plugins-blacklist":
+                final List<String> plugins = JiveGlobals.getListProperty("sparkplugin.blacklist", Collections.emptyList());
+                for( final String plugin : plugins ) {
+                    responseElement.addElement("item")
+                        .addAttribute("jid", jid.toString())
+                        .addAttribute("node", plugin);
+                }
+                break;
+            default:
+                // This should be prevented by the code that calls this method.
+                throw new IllegalArgumentException("Missing support for node: " + requestedNode );
+        }
     }
 
     /**
@@ -305,15 +344,29 @@ public class SparkManager implements Component {
      * @param packet the IQ packet.
      */
     private void handleDiscoInfo(IQ packet) {
+        final String requestedNode = packet.getChildElement().attributeValue("node");
+
         IQ replyPacket = IQ.createResultIQ(packet);
-        Element responseElement =
-                replyPacket.setChildElement("query", "http://jabber.org/protocol/disco#info");
-        Element identity = responseElement.addElement("identity");
-        identity.addAttribute("category", "manager");
-        identity.addAttribute("type", "text");
-        identity.addAttribute("name", "Client Control Manager");
-        // Add features set
-        buildFeatureSet(responseElement);
+        Element responseElement = replyPacket.setChildElement("query", "http://jabber.org/protocol/disco#info");
+        if (requestedNode == null) {
+            // Respond with generic disco#info data.
+            Element identity = responseElement.addElement("identity");
+            identity.addAttribute("category", "manager");
+            identity.addAttribute("type", "text");
+            identity.addAttribute("name", "Client Control Manager");
+            // Add features set
+            buildFeatureSet(responseElement);
+        } else {
+            // Respond with node-specific data.
+            responseElement.addAttribute("node", requestedNode);
+            if (!Arrays.asList(supportedDiscoInfoNodes).contains(requestedNode)) {
+                replyPacket.setError(PacketError.Condition.item_not_found);
+            } else {
+                // By default, we have no supported feature for any of the nodes, other than disco#info itself.
+                responseElement.addElement("identity").addAttribute("category", "hierarchy").addAttribute("type", "leaf");
+                responseElement.addElement("feature").addAttribute("var", "http://jabber.org/protocol/disco#info");
+            }
+        }
         // Send reply
         sendPacket(replyPacket);
     }
