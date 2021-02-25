@@ -114,19 +114,19 @@
             blackListedPlugins.add("TicTacToe");
         }
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginMeetEnabled")) ) {
-            blackListedPlugins.add("Pade Meetings Plugin");
+            blackListedPlugins.add("PadeMeetingsPlugin");
         }
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTranslatorEnabled")) ) {
-            blackListedPlugins.add("Translator Plugin");
+            blackListedPlugins.add("TranslatorPlugin");
         }
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginHttpFileUploadEnabled")) ) {
-            blackListedPlugins.add("Http File Upload Plugin");
+            blackListedPlugins.add("HttpFileUploadPlugin");
         }
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTransferGuardEnabled")) ) {
-            blackListedPlugins.add("Transfer Guard");
+            blackListedPlugins.add("TransferGuard");
         }
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginRoarEnabled")) ) {
-            blackListedPlugins.add("Roar!!!");
+            blackListedPlugins.add("Roar");
         }
 		
         JiveGlobals.setProperty("accounts.enabled", accountsEnabledString);
@@ -198,11 +198,11 @@
     final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
     boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
     boolean sparkPluginTicTacToeEnabled = !blacklistedPlugins.contains("TicTacToe");
-    boolean sparkPluginMeetEnabled = !blacklistedPlugins.contains("Pade Meetings Plugin");
-	boolean sparkPluginTranslatorEnabled = !blacklistedPlugins.contains("Translator Plugin");
-	boolean sparkPluginHttpFileUploadEnabled = !blacklistedPlugins.contains("Http File Upload Plugin");
-	boolean sparkPluginTransferGuardEnabled = !blacklistedPlugins.contains("Transfer Guard");
-	boolean sparkPluginRoarEnabled = !blacklistedPlugins.contains("Roar!!!");
+    boolean sparkPluginMeetEnabled = !blacklistedPlugins.contains("PadeMeetingsPlugin");
+	boolean sparkPluginTranslatorEnabled = !blacklistedPlugins.contains("TranslatorPlugin");
+	boolean sparkPluginHttpFileUploadEnabled = !blacklistedPlugins.contains("HttpFileUploadPlugin");
+	boolean sparkPluginTransferGuardEnabled = !blacklistedPlugins.contains("TransferGuard");
+	boolean sparkPluginRoarEnabled = !blacklistedPlugins.contains("Roar");
 	
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
