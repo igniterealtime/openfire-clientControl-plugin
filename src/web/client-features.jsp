@@ -113,7 +113,19 @@
         if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTicTacToeEnabled")) ) {
             blackListedPlugins.add("TicTacToe");
         }
-
+		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTranslatorEnabled")) ) {
+            blackListedPlugins.add("TranslatorPlugin");
+        }
+		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginHttpFileUploadEnabled")) ) {
+            blackListedPlugins.add("HttpFileUploadPlugin");
+        }
+		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTransferGuardEnabled")) ) {
+            blackListedPlugins.add("TransferGuard");
+        }
+		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginRoarEnabled")) ) {
+            blackListedPlugins.add("Roar");
+        }
+		
         JiveGlobals.setProperty("accounts.enabled", accountsEnabledString);
         JiveGlobals.setProperty("addcontacts.enabled", addcontactsEnabledString);
         JiveGlobals.setProperty("addgroups.enabled", addgroupsEnabledString);
@@ -183,7 +195,11 @@
     final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
     boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
     boolean sparkPluginTicTacToeEnabled = !blacklistedPlugins.contains("TicTacToe");
-
+	boolean sparkPluginTranslatorEnabled = !blacklistedPlugins.contains("TranslatorPlugin");
+	boolean sparkPluginHttpFileUploadEnabled = !blacklistedPlugins.contains("HttpFileUploadPlugin");
+	boolean sparkPluginTransferGuardEnabled = !blacklistedPlugins.contains("TransferGuard");
+	boolean sparkPluginRoarEnabled = !blacklistedPlugins.contains("Roar");
+	
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
             .getPluginManager().getPlugin("clientcontrol");
@@ -400,16 +416,6 @@
                     <input type="radio" name="invisibleloginEnabled" value="false" <%= !invisibleloginEnabled ? "checked" : "" %> />
                 </td>
             </tr>
-        </table>
-    </div>
-            
-<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
-            
-    <div style="display:inline-block;width:600px;margin:10px;">
-        <table class="jive-table" cellspacing="0" width="600">
-            <th><fmt:message key="client.feature"/></th>
-            <th><fmt:message key="client.features.enabled"/></th>
-            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.anonymouslogin" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.anonymouslogin.description" />
@@ -432,6 +438,16 @@
                     <input type="radio" name="logoutexitEnabled" value="false" <%= !logoutexitEnabled ? "checked" : "" %> />
                 </td>
             </tr>
+		</table>
+    </div>
+            
+<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
+            
+    <div style="display:inline-block;width:600px;margin:10px;">
+        <table class="jive-table" cellspacing="0" width="600">
+            <th><fmt:message key="client.feature"/></th>
+            <th><fmt:message key="client.features.enabled"/></th>
+            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.movecopy" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.movecopy.description" />
@@ -595,6 +611,50 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="sparkPluginTicTacToeEnabled" value="false" <%= !sparkPluginTicTacToeEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginTranslatorEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginTranslatorEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginTranslatorEnabled" value="true" <%= sparkPluginTranslatorEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginTranslatorEnabled" value="false" <%= !sparkPluginTranslatorEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginHttpFileUploadEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginHttpFileUploadEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginHttpFileUploadEnabled" value="true" <%= sparkPluginHttpFileUploadEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginHttpFileUploadEnabled" value="false" <%= !sparkPluginHttpFileUploadEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginTransferGuardEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginTransferGuardEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginTransferGuardEnabled" value="true" <%= sparkPluginTransferGuardEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginTransferGuardEnabled" value="false" <%= !sparkPluginTransferGuardEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginRoarEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginRoarEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginRoarEnabled" value="true" <%= sparkPluginRoarEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginRoarEnabled" value="false" <%= !sparkPluginRoarEnabled ? "checked" : "" %> />
                 </td>
             </tr>
         </table>
