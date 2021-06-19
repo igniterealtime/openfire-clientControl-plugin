@@ -113,9 +113,6 @@
         if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTicTacToeEnabled")) ) {
             blackListedPlugins.add("TicTacToe");
         }
-		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginMeetEnabled")) ) {
-            blackListedPlugins.add("PadeMeetingsPlugin");
-        }
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginTranslatorEnabled")) ) {
             blackListedPlugins.add("TranslatorPlugin");
         }
@@ -198,7 +195,6 @@
     final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
     boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
     boolean sparkPluginTicTacToeEnabled = !blacklistedPlugins.contains("TicTacToe");
-    boolean sparkPluginMeetEnabled = !blacklistedPlugins.contains("PadeMeetingsPlugin");
 	boolean sparkPluginTranslatorEnabled = !blacklistedPlugins.contains("TranslatorPlugin");
 	boolean sparkPluginHttpFileUploadEnabled = !blacklistedPlugins.contains("HttpFileUploadPlugin");
 	boolean sparkPluginTransferGuardEnabled = !blacklistedPlugins.contains("TransferGuard");
@@ -615,17 +611,6 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="sparkPluginTicTacToeEnabled" value="false" <%= !sparkPluginTicTacToeEnabled ? "checked" : "" %> />
-                </td>
-            </tr>
-            <tr>
-                <td><b><fmt:message key="client.features.sparkPluginMeetEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
-                         <fmt:message key="client.features.sparkPluginMeetEnabled.description" />
-                      </span></td>
-                <td width="1%" nowrap>
-                    <input type="radio" name="sparkPluginMeetEnabled" value="true" <%= sparkPluginMeetEnabled ? "checked" : "" %> />
-                </td>
-                <td width="1%" nowrap>
-                    <input type="radio" name="sparkPluginMeetEnabled" value="false" <%= !sparkPluginMeetEnabled ? "checked" : "" %> />
                 </td>
             </tr>
             <tr>
