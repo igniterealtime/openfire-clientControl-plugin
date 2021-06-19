@@ -125,6 +125,9 @@
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginRoarEnabled")) ) {
             blackListedPlugins.add("Roar");
         }
+		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginPadeMeetingsEnabled")) ) {
+            blackListedPlugins.add("PadeMeetingsPlugin");
+        }
 		
         JiveGlobals.setProperty("accounts.enabled", accountsEnabledString);
         JiveGlobals.setProperty("addcontacts.enabled", addcontactsEnabledString);
@@ -199,6 +202,7 @@
 	boolean sparkPluginHttpFileUploadEnabled = !blacklistedPlugins.contains("HttpFileUploadPlugin");
 	boolean sparkPluginTransferGuardEnabled = !blacklistedPlugins.contains("TransferGuard");
 	boolean sparkPluginRoarEnabled = !blacklistedPlugins.contains("Roar");
+	boolean sparkPluginPadeMeetingsEnabled = !blacklistedPlugins.contains("PadeMeetingsPlugin");
 	
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
@@ -438,16 +442,6 @@
                     <input type="radio" name="logoutexitEnabled" value="false" <%= !logoutexitEnabled ? "checked" : "" %> />
                 </td>
             </tr>
-		</table>
-    </div>
-            
-<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
-            
-    <div style="display:inline-block;width:600px;margin:10px;">
-        <table class="jive-table" cellspacing="0" width="600">
-            <th><fmt:message key="client.feature"/></th>
-            <th><fmt:message key="client.features.enabled"/></th>
-            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.movecopy" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.movecopy.description" />
@@ -459,6 +453,16 @@
                     <input type="radio" name="movecopyEnabled" value="false" <%= !movecopyEnabled ? "checked" : "" %> />
                 </td>
             </tr>
+		</table>
+    </div>
+            
+<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
+            
+    <div style="display:inline-block;width:600px;margin:10px;">
+        <table class="jive-table" cellspacing="0" width="600">
+            <th><fmt:message key="client.feature"/></th>
+            <th><fmt:message key="client.features.enabled"/></th>
+            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.passwordchange" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.passwordchange.description" />
@@ -655,6 +659,17 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="sparkPluginRoarEnabled" value="false" <%= !sparkPluginRoarEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginPadeMeetingsEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginPadeMeetingsEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginPadeMeetingsEnabled" value="true" <%= sparkPluginPadeMeetingsEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginPadeMeetingsEnabled" value="false" <%= !sparkPluginPadeMeetingsEnabled ? "checked" : "" %> />
                 </td>
             </tr>
         </table>
