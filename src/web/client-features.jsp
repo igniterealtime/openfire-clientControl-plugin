@@ -128,6 +128,12 @@
 		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginPadeMeetingsEnabled")) ) {
             blackListedPlugins.add("PadeMeetingsPlugin");
         }
+				if ( !Boolean.parseBoolean( request.getParameter("sparkPluginFastpathEnabled")) ) {
+            blackListedPlugins.add("Fastpath");
+        }
+				if ( !Boolean.parseBoolean( request.getParameter("sparkPluginWindowFlashingEnabled")) ) {
+            blackListedPlugins.add("WindowFlashingPlugin");
+        }
 		
         JiveGlobals.setProperty("accounts.enabled", accountsEnabledString);
         JiveGlobals.setProperty("addcontacts.enabled", addcontactsEnabledString);
@@ -203,6 +209,8 @@
 	boolean sparkPluginTransferGuardEnabled = !blacklistedPlugins.contains("TransferGuard");
 	boolean sparkPluginRoarEnabled = !blacklistedPlugins.contains("Roar");
 	boolean sparkPluginPadeMeetingsEnabled = !blacklistedPlugins.contains("PadeMeetingsPlugin");
+	boolean sparkPluginFastpathEnabled = !blacklistedPlugins.contains("Fastpath");
+	boolean sparkPluginWindowFlashingEnabled = !blacklistedPlugins.contains("WindowFlashingPlugin");
 	
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
@@ -453,16 +461,6 @@
                     <input type="radio" name="movecopyEnabled" value="false" <%= !movecopyEnabled ? "checked" : "" %> />
                 </td>
             </tr>
-		</table>
-    </div>
-            
-<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
-            
-    <div style="display:inline-block;width:600px;margin:10px;">
-        <table class="jive-table" cellspacing="0" width="600">
-            <th><fmt:message key="client.feature"/></th>
-            <th><fmt:message key="client.features.enabled"/></th>
-            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.passwordchange" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.passwordchange.description" />
@@ -474,6 +472,16 @@
                     <input type="radio" name="passwordchangeEnabled" value="false" <%= !passwordchangeEnabled ? "checked" : "" %> />
                 </td>
             </tr>
+		</table>
+    </div>
+            
+<!-- ======================================================  N E W   T A B L E   H E R E  ====================================================== -->	        
+            
+    <div style="display:inline-block;width:600px;margin:10px;">
+        <table class="jive-table" cellspacing="0" width="600">
+            <th><fmt:message key="client.feature"/></th>
+            <th><fmt:message key="client.features.enabled"/></th>
+            <th><fmt:message key="client.features.disabled"/></th>
             <tr>
                 <td><b><fmt:message key="client.features.personsearch" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
                          <fmt:message key="client.features.personsearch.description" />
@@ -670,6 +678,28 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="sparkPluginPadeMeetingsEnabled" value="false" <%= !sparkPluginPadeMeetingsEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginFastpathEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginFastpathEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginFastpathEnabled" value="true" <%= sparkPluginFastpathEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginFastpathEnabled" value="false" <%= !sparkPluginFastpathEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginWindowFlashingEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginWindowFlashingEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginWindowFlashingEnabled" value="true" <%= sparkPluginWindowFlashingEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginWindowFlashingEnabled" value="false" <%= !sparkPluginWindowFlashingEnabled ? "checked" : "" %> />
                 </td>
             </tr>
         </table>
