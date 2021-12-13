@@ -134,6 +134,9 @@
 				if ( !Boolean.parseBoolean( request.getParameter("sparkPluginWindowFlashingEnabled")) ) {
             blackListedPlugins.add("WindowFlashingPlugin");
         }
+        		if ( !Boolean.parseBoolean( request.getParameter("sparkPluginSpellcheckerEnabled")) ) {
+            blackListedPlugins.add("SpellcheckerPlugin");
+        }
 		
         JiveGlobals.setProperty("accounts.enabled", accountsEnabledString);
         JiveGlobals.setProperty("addcontacts.enabled", addcontactsEnabledString);
@@ -211,6 +214,7 @@
 	boolean sparkPluginPadeMeetingsEnabled = !blacklistedPlugins.contains("PadeMeetingsPlugin");
 	boolean sparkPluginFastpathEnabled = !blacklistedPlugins.contains("Fastpath");
 	boolean sparkPluginWindowFlashingEnabled = !blacklistedPlugins.contains("WindowFlashingPlugin");
+	boolean sparkPluginSpellcheckerEnabled = !blacklistedPlugins.contains("SpellcheckerPlugin");
 	
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
@@ -689,6 +693,17 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="sparkPluginFastpathEnabled" value="false" <%= !sparkPluginFastpathEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.sparkPluginSpellcheckerEnabled" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.sparkPluginSpellcheckerEnabled.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginSpellcheckerEnabled" value="true" <%= sparkPluginSpellcheckerEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="sparkPluginSpellcheckerEnabled" value="false" <%= !sparkPluginSpellcheckerEnabled ? "checked" : "" %> />
                 </td>
             </tr>
             <tr>
