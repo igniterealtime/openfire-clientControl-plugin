@@ -58,6 +58,8 @@
     String startachatEnabledString = JiveGlobals.getProperty("startachat.enabled", "true");
     String hostnameasresourceEnabledString = JiveGlobals.getProperty("hostnameasresource.enabled", "false");
     String versionasresourceEnabledString = JiveGlobals.getProperty("versionasresource.enabled", "false");
+    String idleonEnabledString = JiveGlobals.getProperty("idleonlock.enabled", "true");
+    String idletimeEnabledString = JiveGlobals.getProperty("idletimelock.enabled", "true");
 
     boolean submit = request.getParameter("submit") != null;
 
@@ -105,6 +107,8 @@
         startachatEnabledString = request.getParameter("startachatEnabled");
         hostnameasresourceEnabledString = request.getParameter("hostnameasresourceEnabled");
         versionasresourceEnabledString = request.getParameter("versionasresourceEnabled");
+        idleonEnabledString = request.getParameter("idleonlockEnabled");
+        idletimeEnabledString = request.getParameter("idletimelockEnabled");
 
         final List<String> blackListedPlugins = new ArrayList<>();
         if ( !Boolean.parseBoolean( request.getParameter("sparkPluginReversiEnabled")) ) {
@@ -167,6 +171,8 @@
         JiveGlobals.setProperty("hostnameasresource.enabled", hostnameasresourceEnabledString);
         JiveGlobals.setProperty("versionasresource.enabled", versionasresourceEnabledString);
         JiveGlobals.setProperty("sparkplugin.blacklist", blackListedPlugins);
+        JiveGlobals.setProperty("idleonlock.enabled", idleonEnabledString);
+        JiveGlobals.setProperty("idletimelock.enabled", idletimeEnabledString);
     }
     
     boolean accountsEnabled = Boolean.parseBoolean(accountsEnabledString);
@@ -200,6 +206,8 @@
     boolean startachatEnabled = Boolean.parseBoolean(startachatEnabledString);
     boolean hostnameasresourceEnabled = Boolean.parseBoolean(hostnameasresourceEnabledString);
     boolean versionasresourceEnabled = Boolean.parseBoolean(versionasresourceEnabledString);
+    boolean idleonlockEnabled = Boolean.parseBoolean(idleonEnabledString);
+    boolean idletimelockEnabled = Boolean.parseBoolean(idletimeEnabledString);
 
     final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
     boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
@@ -601,6 +609,28 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="versionasresourceEnabled" value="false" <%= !versionasresourceEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.idleonlock" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.idleonlock.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idleonlockEnabled" value="true" <%= idleonlockEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idleonlockEnabled" value="false" <%= !idleonlockEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.idletimelock" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.idletimelock.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idletimelockEnabled" value="true" <%= idletimelockEnabled? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idletimelockEnabled" value="false" <%= !idletimelockEnabled ? "checked" : "" %> />
                 </td>
             </tr>
             <tr>
