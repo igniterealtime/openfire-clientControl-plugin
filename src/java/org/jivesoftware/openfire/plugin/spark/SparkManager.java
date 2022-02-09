@@ -578,15 +578,10 @@ public class SparkManager implements Component {
             responseElement.addElement("feature").addAttribute("var", "version-as-resource");
         }
 
-        // Check "Idle On" and enable Idle on feature
-        boolean idleonlockEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("idleonlock.enabled", "true"));
-        if (idleonlockEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "idle-on-lock");
-        }
-        // Check for "Time till idle" and sets the default value(5min) feature
-        boolean idletimelockEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("idletimelock.enabled", "true"));
-        if (idletimelockEnabled) {
-            responseElement.addElement("feature").addAttribute("var", "idle-time-lock");
+        // Check "Modify Idle Settings" feature
+        boolean idleEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("idle.enabled", "true"));
+        if (idleEnabled) {
+            responseElement.addElement("feature").addAttribute("var", "idle");
         }
     }
 
