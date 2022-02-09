@@ -169,7 +169,7 @@
         JiveGlobals.setProperty("hostnameasresource.enabled", hostnameasresourceEnabledString);
         JiveGlobals.setProperty("versionasresource.enabled", versionasresourceEnabledString);
         JiveGlobals.setProperty("sparkplugin.blacklist", blackListedPlugins);
-        JiveGlobals.setProperty("idleo.enabled", idleEnabledString);
+        JiveGlobals.setProperty("idle.enabled", idleEnabledString);
     }
     
     boolean accountsEnabled = Boolean.parseBoolean(accountsEnabledString);
@@ -203,7 +203,7 @@
     boolean startachatEnabled = Boolean.parseBoolean(startachatEnabledString);
     boolean hostnameasresourceEnabled = Boolean.parseBoolean(hostnameasresourceEnabledString);
     boolean versionasresourceEnabled = Boolean.parseBoolean(versionasresourceEnabledString);
-    boolean idleoEnabled = Boolean.parseBoolean(idleEnabledString);
+    boolean idleEnabled = Boolean.parseBoolean(idleEnabledString);
 
     final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
     boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
