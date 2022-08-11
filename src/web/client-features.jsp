@@ -22,7 +22,7 @@
     String removalsEnabledString = JiveGlobals.getProperty("removals.enabled", "true");
     String renamesEnabledString = JiveGlobals.getProperty("renames.enabled", "true");
     String fileTransferEnabledString = JiveGlobals.getProperty("transfer.enabled", "true");    
-    String ibbOnlyEnabledString = JiveGlobals.getProperty("ibbonly.enabled", "false");
+    String ibbOnlyEnabledString = JiveGlobals.getProperty("ibbonly.enabled", "true");
     String helpforumsEnabledString = JiveGlobals.getProperty("helpforums.enabled", "true");
     String helpuserguideEnabledString = JiveGlobals.getProperty("helpuserguide.enabled", "true");
 
