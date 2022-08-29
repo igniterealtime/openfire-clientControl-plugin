@@ -59,6 +59,7 @@
     String startachatEnabledString = JiveGlobals.getProperty("startachat.enabled", "true");
     String hostnameasresourceEnabledString = JiveGlobals.getProperty("hostnameasresource.enabled", "false");
     String versionasresourceEnabledString = JiveGlobals.getProperty("versionasresource.enabled", "false");
+    String idleEnabledString = JiveGlobals.getProperty("idle.enabled", "true");
 
     boolean submit = request.getParameter("submit") != null;
 
@@ -107,6 +108,7 @@
         startachatEnabledString = request.getParameter("startachatEnabled");
         hostnameasresourceEnabledString = request.getParameter("hostnameasresourceEnabled");
         versionasresourceEnabledString = request.getParameter("versionasresourceEnabled");
+        idleEnabledString = request.getParameter("idleEnabled");
 
         final List<String> blackListedPlugins = new ArrayList<>();
         if ( !Boolean.parseBoolean( request.getParameter("sparkPluginReversiEnabled")) ) {
@@ -170,6 +172,7 @@
         JiveGlobals.setProperty("hostnameasresource.enabled", hostnameasresourceEnabledString);
         JiveGlobals.setProperty("versionasresource.enabled", versionasresourceEnabledString);
         JiveGlobals.setProperty("sparkplugin.blacklist", blackListedPlugins);
+        JiveGlobals.setProperty("idle.enabled", idleEnabledString);
     }
     
     boolean accountsEnabled = Boolean.parseBoolean(accountsEnabledString);
@@ -204,6 +207,7 @@
     boolean startachatEnabled = Boolean.parseBoolean(startachatEnabledString);
     boolean hostnameasresourceEnabled = Boolean.parseBoolean(hostnameasresourceEnabledString);
     boolean versionasresourceEnabled = Boolean.parseBoolean(versionasresourceEnabledString);
+    boolean idleEnabled = Boolean.parseBoolean(idleEnabledString);
 
     final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
     boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
@@ -616,6 +620,17 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="versionasresourceEnabled" value="false" <%= !versionasresourceEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.idle" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.idle.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idleEnabled" value="true" <%= idleEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idleEnabled" value="false" <%= !idleEnabled ? "checked" : "" %> />
                 </td>
             </tr>
             <tr>

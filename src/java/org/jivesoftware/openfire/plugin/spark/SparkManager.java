@@ -584,6 +584,11 @@ public class SparkManager implements Component {
             responseElement.addElement("feature").addAttribute("var", "version-as-resource");
         }
 
+        // Check "Modify Idle Settings" feature
+        boolean idleEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("idle.enabled", "true"));
+        if (idleEnabled) {
+            responseElement.addElement("feature").addAttribute("var", "idle");
+        }
     }
 
     /**
