@@ -22,6 +22,7 @@
     String removalsEnabledString = JiveGlobals.getProperty("removals.enabled", "true");
     String renamesEnabledString = JiveGlobals.getProperty("renames.enabled", "true");
     String fileTransferEnabledString = JiveGlobals.getProperty("transfer.enabled", "true");    
+    String ibbOnlyEnabledString = JiveGlobals.getProperty("ibbonly.enabled", "true");
     String helpforumsEnabledString = JiveGlobals.getProperty("helpforums.enabled", "true");
     String helpuserguideEnabledString = JiveGlobals.getProperty("helpuserguide.enabled", "true");
 
@@ -58,6 +59,7 @@
     String startachatEnabledString = JiveGlobals.getProperty("startachat.enabled", "true");
     String hostnameasresourceEnabledString = JiveGlobals.getProperty("hostnameasresource.enabled", "false");
     String versionasresourceEnabledString = JiveGlobals.getProperty("versionasresource.enabled", "false");
+    String idleEnabledString = JiveGlobals.getProperty("idle.enabled", "true");
 
     boolean submit = request.getParameter("submit") != null;
 
@@ -83,6 +85,7 @@
         removalsEnabledString = request.getParameter("removalsEnabled");
         renamesEnabledString = request.getParameter("renamesEnabled");
         fileTransferEnabledString = request.getParameter("transferEnabled");
+        ibbOnlyEnabledString = request.getParameter("ibbOnlyEnabled");
         helpforumsEnabledString = request.getParameter("helpforumsEnabled");
         helpuserguideEnabledString = request.getParameter("helpuserguideEnabled");
         historysettingsEnabledString = request.getParameter("historysettingsEnabled");
@@ -105,6 +108,7 @@
         startachatEnabledString = request.getParameter("startachatEnabled");
         hostnameasresourceEnabledString = request.getParameter("hostnameasresourceEnabled");
         versionasresourceEnabledString = request.getParameter("versionasresourceEnabled");
+        idleEnabledString = request.getParameter("idleEnabled");
 
         final List<String> blackListedPlugins = new ArrayList<>();
         if ( !Boolean.parseBoolean( request.getParameter("sparkPluginReversiEnabled")) ) {
@@ -147,6 +151,7 @@
         JiveGlobals.setProperty("removals.enabled", removalsEnabledString);
         JiveGlobals.setProperty("renames.enabled", renamesEnabledString);
         JiveGlobals.setProperty("transfer.enabled", fileTransferEnabledString);
+        JiveGlobals.setProperty("ibbonly.enabled", ibbOnlyEnabledString);
         JiveGlobals.setProperty("helpforums.enabled", helpforumsEnabledString);
         JiveGlobals.setProperty("helpuserguide.enabled", helpuserguideEnabledString);
         JiveGlobals.setProperty("historysettings.enabled", historysettingsEnabledString);
@@ -170,6 +175,7 @@
         JiveGlobals.setProperty("hostnameasresource.enabled", hostnameasresourceEnabledString);
         JiveGlobals.setProperty("versionasresource.enabled", versionasresourceEnabledString);
         JiveGlobals.setProperty("sparkplugin.blacklist", blackListedPlugins);
+        JiveGlobals.setProperty("idle.enabled", idleEnabledString);
     }
     
     boolean accountsEnabled = Boolean.parseBoolean(accountsEnabledString);
@@ -181,6 +187,7 @@
     boolean removalsEnabled = Boolean.parseBoolean(removalsEnabledString);
     boolean renamesEnabled = Boolean.parseBoolean(renamesEnabledString);
     boolean transferEnabled = Boolean.parseBoolean(fileTransferEnabledString);
+    boolean ibbOnlyEnabled = Boolean.parseBoolean(ibbOnlyEnabledString);
     boolean helpforumsEnabled = Boolean.parseBoolean(helpforumsEnabledString);
     boolean helpuserguideEnabled = Boolean.parseBoolean(helpuserguideEnabledString);
     boolean historysettingsEnabled = Boolean.parseBoolean(historysettingsEnabledString);
@@ -203,6 +210,7 @@
     boolean startachatEnabled = Boolean.parseBoolean(startachatEnabledString);
     boolean hostnameasresourceEnabled = Boolean.parseBoolean(hostnameasresourceEnabledString);
     boolean versionasresourceEnabled = Boolean.parseBoolean(versionasresourceEnabledString);
+    boolean idleEnabled = Boolean.parseBoolean(idleEnabledString);
 
     final List<String> blacklistedPlugins = JiveGlobals.getListProperty("sparkplugin.blacklist", new ArrayList<String>());
     boolean sparkPluginReversiEnabled = !blacklistedPlugins.contains("Reversi");
@@ -364,6 +372,17 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="transferEnabled" value="false" <%= !transferEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.ibbonly" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                   <fmt:message key="client.features.ibbonly.description" />
+               </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="ibbOnlyEnabled" value="true" <%= ibbOnlyEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="ibbOnlyEnabled" value="false" <%= !ibbOnlyEnabled ? "checked" : "" %> />
                 </td>
             </tr>
             <tr>
@@ -605,6 +624,17 @@
                 </td>
                 <td width="1%" nowrap>
                     <input type="radio" name="versionasresourceEnabled" value="false" <%= !versionasresourceEnabled ? "checked" : "" %> />
+                </td>
+            </tr>
+            <tr>
+                <td><b><fmt:message key="client.features.idle" /></b> - <fmt:message key="client.features.spark.only" /><br/><span class="jive-description">
+                         <fmt:message key="client.features.idle.description" />
+                      </span></td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idleEnabled" value="true" <%= idleEnabled ? "checked" : "" %> />
+                </td>
+                <td width="1%" nowrap>
+                    <input type="radio" name="idleEnabled" value="false" <%= !idleEnabled ? "checked" : "" %> />
                 </td>
             </tr>
             <tr>

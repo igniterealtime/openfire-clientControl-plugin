@@ -440,6 +440,12 @@ public class SparkManager implements Component {
             responseElement.addElement("feature").addAttribute("var", "file-transfer");
         }
 
+        //Check for IBB Only feature
+        boolean ibbOnlyEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("ibbonly.enabled","true"));
+        if(ibbOnlyEnabled){
+            responseElement.addElement("feature").addAttribute("var", "ibb-only");
+        }
+
         // Check for HELP FORUMS feature
         boolean helpforumsEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("helpforums.enabled", "true"));
         if (helpforumsEnabled) {
@@ -578,6 +584,11 @@ public class SparkManager implements Component {
             responseElement.addElement("feature").addAttribute("var", "version-as-resource");
         }
 
+        // Check "Modify Idle Settings" feature
+        boolean idleEnabled = Boolean.parseBoolean(JiveGlobals.getProperty("idle.enabled", "true"));
+        if (idleEnabled) {
+            responseElement.addElement("feature").addAttribute("var", "idle");
+        }
     }
 
     /**
