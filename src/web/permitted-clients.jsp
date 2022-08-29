@@ -155,8 +155,6 @@
 <head>
     <title><fmt:message key="permitted.client.title"/></title>
     <meta name="pageID" content="client-version"/>
-    <script type="text/javascript" language="javascript" src="scripts/tooltips/domLib.js"></script>
-    <script type="text/javascript" language="javascript" src="scripts/tooltips/domTT.js"></script>
     <link rel="stylesheet" type="text/css" href="style/style.css">
 
     <script type="text/javascript">
@@ -203,29 +201,6 @@
         border-color: #bbb;
         border-style: solid;
         border-width: 0px 0px 1px 0px;
-    }
-
-    /* Default DOM Tooltip Style */
-    div.domTT {
-        border: 1px solid #bbb;
-        background-color: #F9F5D5;
-        font-family: arial;
-        font-size: 9px;
-        padding: 5px;
-    }
-
-    div.domTT .caption {
-        font-family: serif;
-        font-size: 12px;
-        font-weight: bold;
-        padding: 1px 2px;
-        color: #FFFFFF;
-    }
-
-    div.domTT .contents {
-        font-size: 12px;
-        font-family: sans-serif;
-        padding: 3px 2px;
     }
 
     .textfield {
@@ -299,9 +274,9 @@
 
             <span class="horizontalrule" style="height:1px;"></span>
 
-            <strong><fmt:message key="permitted.client.add.other.client" />:</strong>
-            <a onmouseover="domTT_activate(this, event, 'content', '<fmt:message key="permitted.client.tooltip" />', 'trail', true, 'direction', 'northeast', 'width', '220');"><img src="images/icon_help_14x14.gif" align="texttop" /></a><br>
-            <input type="text" name="other" style="width: 160px;">&nbsp;<input type="hidden" value="${csrf}" name="csrf"><input type="submit" name="addOther" value="<fmt:message key="permitted.client.add" />"/><br>
+            <strong><label for="other"><fmt:message key="permitted.client.add.other.client" />:</label></strong>
+            <span class="openfire-helpicon-with-tooltip"><span class="helpicon"></span><span class="tooltiptext"><fmt:message key="permitted.client.tooltip" /></span></span><br>
+            <input type="text" id="other" name="other" style="width: 160px;">&nbsp;<input type="hidden" value="${csrf}" name="csrf"><input type="submit" name="addOther" value="<fmt:message key="permitted.client.add" />"/><br>
             <% for (String otherClient : otherClients) { %>
                 <%= otherClient%>&nbsp(<a href="permitted-clients.jsp?csrf=${csrf}&removeClient=<%=StringUtils.escapeForXML(otherClient)%>" name="removeClient" id="<%= StringUtils.escapeForXML(otherClient) %>"><fmt:message key="permitted.client.remove" /></a>)<br>
             <% } %>
