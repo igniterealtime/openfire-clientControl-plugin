@@ -9,9 +9,8 @@
     <description>Controls clients allowed to connect and available features</description>
     <author>Jive Software</author>
     <version>${project.version}</version>
-    <date>2022-08-30</date>
-    <minServerVersion>4.0.0</minServerVersion>
-    <minJavaVersion>1.8</minJavaVersion>
+    <date>2024-09-11</date>
+    <minServerVersion>4.8.0</minServerVersion>
 
     <!-- UI extension -->
     <adminconsole>		

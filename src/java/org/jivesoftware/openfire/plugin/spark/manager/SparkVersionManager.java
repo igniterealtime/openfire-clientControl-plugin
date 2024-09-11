@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2008 Jive Software. All rights reserved.
+ * Copyright (C) 1999-2008 Jive Software, 2024 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.jivesoftware.openfire.plugin.spark.manager;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 
 import org.dom4j.Element;
 import org.jivesoftware.openfire.XMPPServer;
@@ -47,7 +50,7 @@ public class SparkVersionManager implements Component {
     
     private static final Logger Log = LoggerFactory.getLogger(SparkVersionManager.class);
     
-    private ComponentManager componentManager;
+    private final ComponentManager componentManager;
     public static String SERVICE_NAME = "updater";
 
     /**
@@ -160,16 +163,19 @@ public class SparkVersionManager implements Component {
             sparkElement.addElement("version").setText(versionNumber);
 
             // Add updated time.
-            File clientFile = new File(JiveGlobals.getHomeDirectory(), "enterprise/spark/" + client);
-            if (!clientFile.exists()) {
+            Path clientFile = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").resolve(client);
+            if (!Files.exists(clientFile)) {
                 reply.setChildElement(packet.getChildElement().createCopy());
                 reply.setError(new PacketError(PacketError.Condition.item_not_found));
                 sendPacket(reply);
                 return;
             }
-            long updatedTime = clientFile.lastModified();
-            sparkElement.addElement("updatedTime").setText(Long.toString(updatedTime));
-
+            try {
+                FileTime updatedTime = Files.getLastModifiedTime(clientFile);
+                sparkElement.addElement("updatedTime").setText(String.valueOf(updatedTime.toInstant().toEpochMilli()));
+            } catch (IOException e) {
+                Log.info("Unable to determine the last-modified time of file {}", clientFile, e);
+            }
             // Add download url
             String downloadURL = JiveGlobals.getProperty("spark.client.downloadURL");
             String server = XMPPServer.getInstance().getServerInfo().getXMPPDomain();
@@ -178,7 +184,7 @@ public class SparkVersionManager implements Component {
             sparkElement.addElement("downloadURL").setText(downloadURL + "?client=" + client);
 
             String displayMessage = JiveGlobals.getProperty("spark.client.displayMessage");
-            if (displayMessage != null && displayMessage.trim().length() > 0) {
+            if (displayMessage != null && !displayMessage.trim().isEmpty()) {
                 sparkElement.addElement("displayMessage").setText(displayMessage);
             }
         }

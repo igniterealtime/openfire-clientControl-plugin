@@ -2,6 +2,8 @@
 <%@ page import="org.jivesoftware.openfire.XMPPServer" %>
 <%@ page import="org.jivesoftware.util.JiveGlobals" %>
 <%@ page import="java.io.File" %>
+<%@ page import="java.nio.file.Path" %>
+<%@ page import="java.nio.file.Files" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -29,9 +31,10 @@
     boolean windowsClientExists = false;
     boolean macClientExists = false;
     boolean linuxClientExists = false;
-    File buildDir = new File(JiveGlobals.getHomeDirectory(), "enterprise" + File.separator + "spark");
-    if (buildDir.exists()) {
-        File[] list = buildDir.listFiles();
+
+    Path buildDir = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark");
+    if (Files.exists(buildDir)) {
+        File[] list = buildDir.toFile().listFiles();
         int no = list != null ? list.length : 0;
         for (int i = 0; i < no; i++) {
             File clientFile = list[i];
