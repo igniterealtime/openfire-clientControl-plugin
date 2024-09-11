@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2008 Jive Software. All rights reserved.
+ * Copyright (C) 1999-2008 Jive Software, 2024 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,14 +57,14 @@ public class SparkDownloadServlet extends HttpServlet {
             sendClientBuild(response, clientBuild);
         }
         else {
-            File buildDir = new File(JiveGlobals.getHomeDirectory(), "enterprise/spark");
-            if (!buildDir.exists()) {
-                buildDir.mkdirs();
+            Path buildDir = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark");
+            if (!Files.exists(buildDir)) {
+                Files.createDirectories(buildDir);
             }
 
             final List<String> fileList = new ArrayList<String>();
 
-            File[] list = buildDir.listFiles();
+            File[] list = buildDir.toFile().listFiles();
             int no = list != null ? list.length : 0;
             for (int i = 0; i < no; i++) {
                 File clientFile = list[i];
@@ -82,7 +81,7 @@ public class SparkDownloadServlet extends HttpServlet {
 
             Collections.sort(fileList);
 
-            if(fileList.size() > 0){
+            if(!fileList.isEmpty()){
                 int size = fileList.size();
                 String fileName = fileList.get(size - 1);
                 sendClientBuild(response, fileName);
@@ -93,24 +92,23 @@ public class SparkDownloadServlet extends HttpServlet {
     private void sendClientBuild(HttpServletResponse resp, final String clientBuild) throws IOException {
         // Determine release location. All builds should be put into the document_root/releases directory
         // and be named appropriatly (ex. spark_1_0_0.exe, spark_1_0_1.dmg)
-        File clientFile = new File(JiveGlobals.getHomeDirectory(), "enterprise/spark/" + clientBuild);
+        Path clientFile = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").resolve(clientBuild);
 
         // Set content size
         resp.setContentType("application/octet-stream");
         resp.setHeader("Content-Disposition", "attachment; filename=" + clientBuild);
-        resp.setContentLength((int)clientFile.length());
+        resp.setContentLength((int)Files.size(clientFile));
 
         // Open the file and output streams
-        FileInputStream in = new FileInputStream(clientFile);
-        OutputStream out = resp.getOutputStream();
-
-        // Copy the contents of the file to the output stream
-        byte[] buf = new byte[1024];
-        int count;
-        while ((count = in.read(buf)) >= 0) {
-            out.write(buf, 0, count);
+        try (final InputStream in = Files.newInputStream(clientFile);
+             final OutputStream out = resp.getOutputStream())
+        {
+            // Copy the contents of the file to the output stream
+            byte[] buf = new byte[1024];
+            int count;
+            while ((count = in.read(buf)) >= 0) {
+                out.write(buf, 0, count);
+            }
         }
-        in.close();
-        out.close();
     }
 }

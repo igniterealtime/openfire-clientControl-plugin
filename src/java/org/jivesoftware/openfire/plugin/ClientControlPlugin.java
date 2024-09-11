@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Jive Software. All rights reserved.
+ * Copyright (C) 2008 Jive Software, 2024 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,8 @@ import org.jivesoftware.openfire.plugin.spark.SparkManager;
 import org.jivesoftware.openfire.plugin.spark.TaskEngine;
 import org.jivesoftware.openfire.plugin.spark.manager.SparkVersionManager;
 import org.jivesoftware.openfire.plugin.spark.manager.FileTransferFilterManager;
-import org.jivesoftware.util.JiveGlobals;
 
 import java.io.File;
-import java.io.FileFilter;
 
 /**
  * Client control plugin.
@@ -48,20 +46,6 @@ public class ClientControlPlugin implements Plugin {
     // Plugin Interface
 
     public void initializePlugin(PluginManager manager, File pluginDirectory) {
-        // Check if we Enterprise is installed and stop loading this plugin if found
-        File pluginDir = new File(JiveGlobals.getHomeDirectory(), "plugins");
-        File[] jars = pluginDir.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-                String fileName = pathname.getName().toLowerCase();
-                return (fileName.equalsIgnoreCase("enterprise.jar"));
-            }
-        });
-        if (jars.length > 0) {
-            // Do not load this plugin since Enterprise is still installed
-            System.out.println("Enterprise plugin found. Stopping Client Control Plugin");
-            throw new IllegalStateException("This plugin cannot run next to the Enterprise plugin");
-        }
-
         taskEngine = TaskEngine.getInstance();
         sparkManager = new SparkManager(taskEngine);
         sparkManager.start();

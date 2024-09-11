@@ -4,16 +4,17 @@
 <%@ page import="org.jivesoftware.util.ParamUtils" %>
 <%@ page import="java.io.File" %>
 <%@ page import="java.util.Date" %>
-<%@ page import="java.io.FilenameFilter"%>
 <%@ page import="org.apache.commons.fileupload.DiskFileUpload"%>
 <%@ page import="java.util.List"%>
-<%@ page import="org.apache.commons.fileupload.FileUploadException"%>
-<%@ page import="org.jivesoftware.util.Log"%>
 <%@ page import="org.apache.commons.fileupload.FileItem"%>
-<%@ page import="java.util.Iterator"%>
-<%@ page import="java.io.FileOutputStream"%>
+<%@ page import="java.nio.file.Path" %>
+<%@ page import="java.nio.file.Files" %>
+<%@ page import="java.util.stream.Collectors" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.stream.Stream" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="admin" prefix="admin" %>
 
 <html>
 <head>
@@ -82,10 +83,9 @@
         optionalMessage = "";
     }
 
-    File buildDir = new File(JiveGlobals.getHomeDirectory(), "enterprise" + File.separator + "spark");
-    // Create the directory if it doesn't exist.
-    if (!buildDir.exists()) {
-        buildDir.mkdirs();
+    Path buildDir = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark");
+    if (!Files.exists(buildDir)) {
+        Files.createDirectories(buildDir);
     }
 
     DiskFileUpload upload = new DiskFileUpload();
@@ -110,22 +110,21 @@
                     filename = new File(filename).getName();
                     byte[] data = fileItem.get();
 
-                    if (filename != null && filename.trim().length() > 0) {
+                    if (!filename.trim().isEmpty()) {
                         uploaded = true;
 
                         // Write out Client to dir.
-                        FileOutputStream faos = new FileOutputStream(new File(buildDir, filename));
-                        faos.write(data);
-                        faos.flush();
-                        faos.close();
+                        Files.write(buildDir.resolve(filename), data);
                     }
-
                 }
             }
         }
     }
 
-
+    request.setAttribute("buildDir", buildDir);
+    request.setAttribute("updated", updated);
+    request.setAttribute("uploaded", uploaded);
+    request.setAttribute("optionalMessage", optionalMessage);
 %>
 
 
@@ -137,40 +136,44 @@
 <form name="f" action="spark-form.jsp" enctype="multipart/form-data" method="post">
     <table>
         <tr>
-            <td colspan="3"><fmt:message key="spark.version.form.builds" /><tt><%= buildDir.getAbsolutePath()%></tt></td>
+            <td colspan="3"><fmt:message key="spark.version.form.builds" /><tt><c:out value="${buildDir.toAbsolutePath()}"/></tt></td>
         </tr>
 
         <tr>
             <td><tt><fmt:message key="spark.version.form.upload" /></tt></td>
-            <td><input type="file" name="file" size="40" /></td>
+            <td><input type="file" name="file" size="40" accept=".exe,.dmg,.tar.gz" /></td>
             <td><input type="submit" name="upload" value="<fmt:message key="spark.version.form.button" />" /></td>
         </tr>
 
     </table>
 </form>
 
-<% if(updated){%>
-<div class="success">
-     <fmt:message key="spark.version.form.confirmation.build" />
+<c:if test="${updated}">
+    <div class="success">
+        <fmt:message key="spark.version.form.confirmation.build" />
     </div><br>
-<% } %>
+</c:if>
 
-<% if(uploaded){ %>
-<div class="success">
-    <fmt:message key="spark.version.form.confirmation.upload" />
-</div><br/>
-<% } %>
+<c:if test="${uploaded}">
+    <div class="success">
+        <fmt:message key="spark.version.form.confirmation.upload" />
+    </div><br/>
+</c:if>
+
+<br>
 
 <form action="spark-form.jsp" method="GET">
 <table><tr><td><img src="images/win.gif" alt=""></td><td><b><fmt:message key="spark.version.form.clients.windows" /></b></td></tr></table>
 
     <%
-        File[] list = buildDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".exe");
-            }
-        });
-        if (list != null && list.length > 0) {
+        Set<Path> list;
+        try (final Stream<Path> stream = Files.list(buildDir)) {
+            list = stream
+                .filter(file -> !Files.isDirectory(file))
+                .filter(file -> file.getFileName().toString().endsWith(".exe"))
+                .collect(Collectors.toSet());
+        }
+        if (!list.isEmpty()) {
     %>
 
     <div class="jive-table">
@@ -185,22 +188,17 @@
             </thead>
             <tbody>
                 <%
-                    for (File clientFile : list) {
-                        Date buildDate = new Date(clientFile.lastModified());
-                        String date = JiveGlobals.formatDateTime(buildDate);
-                        String selected = "";
-                        if (windowClient != null && clientFile.getName().equals(windowClient)) {
-                            selected = "checked";
-                        }
+                    for (Path clientFile : list) {
+                        Date buildDate = Date.from(Files.getLastModifiedTime(clientFile).toInstant());
+                        Boolean isSelected = clientFile.getFileName().toString().equals(windowClient);
+                        request.setAttribute("fileName", clientFile.getFileName().toString());
+                        request.setAttribute("selected", isSelected);
+                        request.setAttribute("buildDate", buildDate);
                 %>
                 <tr>
-                    <td width="1%" align="center"><input type="radio" name="windowsClient"
-                                                         value="<%= clientFile.getName() %>" <%= selected %>></td>
-                    <td width="1%"><b><%= clientFile.getName()%>
-                    </b></td>
-                    <td><%=date %>
-                    </td>
-
+                    <td width="1%" align="center"><input type="radio" name="windowsClient" value="${admin:escapeHTMLTags(fileName)}" ${selected ? 'checked' :''}></td>
+                    <td><b><c:out value="${fileName}"/></b></td>
+                    <td width="10%"><fmt:formatDate value="${buildDate}"/></td>
                 </tr>
                 <%
                     }
@@ -220,12 +218,13 @@
 <table><tr><td><img src="images/mac.gif" alt=""></td><td><b><fmt:message key="spark.version.form.clients.mac" /></b></td></tr></table>
 
     <%
-        list = buildDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".dmg");
-            }
-        });
-        if (list != null && list.length > 0) {
+        try (final Stream<Path> stream = Files.list(buildDir)) {
+            list = stream
+                .filter(file -> !Files.isDirectory(file))
+                .filter(file -> file.getFileName().toString().endsWith(".dmg"))
+                .collect(Collectors.toSet());
+        }
+        if (!list.isEmpty()) {
     %>
     <div class="jive-table">
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -239,22 +238,17 @@
             </thead>
             <tbody>
                 <%
-                    for (File clientFile : list) {
-                        Date buildDate = new Date(clientFile.lastModified());
-                        String date = JiveGlobals.formatDateTime(buildDate);
-                        String selected = "";
-                        if (macClient != null && clientFile.getName().equals(macClient)) {
-                            selected = "checked";
-                        }
+                    for (Path clientFile : list) {
+                        Date buildDate = Date.from(Files.getLastModifiedTime(clientFile).toInstant());
+                        Boolean isSelected = clientFile.getFileName().toString().equals(windowClient);
+                        request.setAttribute("fileName", clientFile.getFileName().toString());
+                        request.setAttribute("selected", isSelected);
+                        request.setAttribute("buildDate", buildDate);
                 %>
                 <tr>
-                    <td width="1%" align="center"><input type="radio" name="macClient"
-                                                         value="<%= clientFile.getName()%>" <%= selected%>></td>
-                    <td width="1%"><b><%= clientFile.getName()%>
-                    </b></td>
-                    <td><%=date %>
-                    </td>
-
+                    <td width="1%" align="center"><input type="radio" name="macClient" value="${admin:escapeHTMLTags(fileName)}" ${selected ? 'checked' :''}></td>
+                    <td><b><c:out value="${fileName}"/></b></td>
+                    <td width="10%"><fmt:formatDate value="${buildDate}"/></td>
                 </tr>
                 <%
                     }
@@ -270,12 +264,13 @@
 <br/>
 <table><tr><td><img src="images/zip.gif" alt=""></td><td><b><fmt:message key="spark.version.form.clients.nix" /></b></td></tr></table>
      <%
-        list = buildDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".tar.gz");
-            }
-        });
-        if (list != null && list.length > 0) {
+         try (final Stream<Path> stream = Files.list(buildDir)) {
+             list = stream
+                 .filter(file -> !Files.isDirectory(file))
+                 .filter(file -> file.getFileName().toString().endsWith(".tar.gz"))
+                 .collect(Collectors.toSet());
+         }
+         if (!list.isEmpty()) {
     %>
     <div class="jive-table">
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -289,22 +284,17 @@
             </thead>
             <tbody>
                 <%
-                    for (File clientFile : list) {
-                        Date buildDate = new Date(clientFile.lastModified());
-                        String date = JiveGlobals.formatDateTime(buildDate);
-                        String selected = "";
-                        if (linuxClient != null && clientFile.getName().equals(linuxClient)) {
-                            selected = "checked";
-                        }
+                    for (Path clientFile : list) {
+                        Date buildDate = Date.from(Files.getLastModifiedTime(clientFile).toInstant());
+                        Boolean isSelected = clientFile.getFileName().toString().equals(windowClient);
+                        request.setAttribute("fileName", clientFile.getFileName().toString());
+                        request.setAttribute("selected", isSelected);
+                        request.setAttribute("buildDate", buildDate);
                 %>
                 <tr>
-                    <td width="1%" align="center"><input type="radio" name="linuxClient"
-                                                         value="<%= clientFile.getName()%>" <%= selected%>></td>
-                    <td width="1%"><b><%= clientFile.getName()%>
-                    </b></td>
-                    <td><%=date %>
-                    </td>
-
+                    <td width="1%" align="center"><input type="radio" name="linuxClient" value="${admin:escapeHTMLTags(fileName)}" ${selected ? 'checked' :''}></td>
+                    <td><b><c:out value="${fileName}"/></b></td>
+                    <td width="10%"><fmt:formatDate value="${buildDate}"/></td>
                 </tr>
                 <%
                     }
@@ -331,8 +321,7 @@
     <tbody>
         <tr>
             <td>
-                <textarea name="optionalMessage" cols="40" rows="3" wrap="virtual"><%= optionalMessage%></textarea>
-
+                <textarea name="optionalMessage" cols="40" rows="3" wrap="virtual"><c:out value="${optionalMessage}"/></textarea>
             </td>
         </tr>
     </tbody>
