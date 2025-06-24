@@ -9,7 +9,7 @@
     <description>Controls clients allowed to connect and available features</description>
     <author>Jive Software</author>
     <version>${project.version}</version>
-    <date>2024-09-12</date>
+    <date>2025-06-24</date>
     <minServerVersion>4.8.0</minServerVersion>
 
     <!-- UI extension -->

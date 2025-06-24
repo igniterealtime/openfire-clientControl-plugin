@@ -226,7 +226,7 @@
 	
     // Enable File Transfer in the system.
     ClientControlPlugin plugin = (ClientControlPlugin) XMPPServer.getInstance()
-            .getPluginManager().getPlugin("clientcontrol");
+            .getPluginManager().getPluginByName("Client Control").orElseThrow();
     FileTransferFilterManager manager = plugin.getFileTransferFilterManager();
     manager.enableFileTransfer(transferEnabled);
 %>
