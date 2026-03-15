@@ -33,9 +33,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Provides support for downloading the  Jive Spark IM client.
- * (<a href="http://www.igniterealtime.org/projects/spark/index.jsp">Spark</a>).<p>
- * <p/>
+ * Provides support for downloading the Spark IM client.
+ * (<a href="https://www.igniterealtime.org/projects/spark/">Spark</a>).
  *
  * @author Derek DeMoro
  */
@@ -91,7 +90,7 @@ public class SparkDownloadServlet extends HttpServlet {
 
     private void sendClientBuild(HttpServletResponse resp, final String clientBuild) throws IOException {
         // Determine release location. All builds should be put into the document_root/releases directory
-        // and be named appropriatly (ex. spark_1_0_0.exe, spark_1_0_1.dmg)
+        // and be named appropriately (ex. spark_1_0_0.exe, spark_1_0_1.dmg)
         Path clientFile = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").resolve(clientBuild);
 
         // Set content size

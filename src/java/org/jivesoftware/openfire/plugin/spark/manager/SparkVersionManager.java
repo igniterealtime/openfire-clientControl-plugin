@@ -37,12 +37,11 @@ import org.xmpp.packet.PacketError;
 
 /**
  * Provides support for server administrators to control the global updating of the Jive Spark IM client.
- * (<a href="http://www.igniterealtime.org/projects/spark/index.jsp">Spark</a>).<p>
- * <p/>
+ * (<a href="http://www.igniterealtime.org/projects/spark/index.jsp">Spark</a>).
+ * <p>
  * The basic functionality is to query the server for the latest client
  * version and return that information. The version comparison is left to
  * the client itself, so as to keep the SparkVersionManager simple.
- * <p/>
  *
  * @author Derek DeMoro
  */
@@ -66,6 +65,7 @@ public class SparkVersionManager implements Component {
      *
      * @return the name of this plugin.
      */
+    @Override
     public String getName() {
         return "Spark Version Manager";
     }
@@ -75,10 +75,12 @@ public class SparkVersionManager implements Component {
      *
      * @return a brief description of this plugin.
      */
+    @Override
     public String getDescription() {
         return "Allow admins to control the updating of the Spark IM Client.";
     }
 
+    @Override
     public void processPacket(Packet packet) {
         if (packet instanceof IQ) {
             IQ iqPacket = (IQ)packet;
@@ -219,14 +221,17 @@ public class SparkVersionManager implements Component {
         sendPacket(replyPacket);
     }
 
+    @Override
     public void initialize(JID jid, ComponentManager componentManager) throws ComponentException {
         // Do nothing.
     }
 
+    @Override
     public void start() {
         // Do nothing
     }
 
+    @Override
     public void shutdown() {
         // Do nothing.
     }
