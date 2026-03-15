@@ -130,7 +130,7 @@ public class SparkVersionManager implements Component {
         // Handle Invalid Requests
         if (os == null || (!os.equals("windows") && !os.equals("mac") && !os.equals("linux"))) {
             reply.setChildElement(packet.getChildElement().createCopy());
-            reply.setError(new PacketError(PacketError.Condition.not_acceptable));
+            reply.setError(new PacketError(PacketError.Condition.not_acceptable, PacketError.Type.modify, "Invalid OS"));
             sendPacket(reply);
             return;
         }
@@ -168,7 +168,7 @@ public class SparkVersionManager implements Component {
             Path clientFile = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").resolve(client);
             if (!Files.exists(clientFile)) {
                 reply.setChildElement(packet.getChildElement().createCopy());
-                reply.setError(new PacketError(PacketError.Condition.item_not_found));
+                reply.setError(new PacketError(PacketError.Condition.item_not_found, PacketError.Type.cancel, "Client package not found"));
                 sendPacket(reply);
                 return;
             }
@@ -192,7 +192,7 @@ public class SparkVersionManager implements Component {
         }
         else {
             reply.setChildElement(packet.getChildElement().createCopy());
-            reply.setError(new PacketError(PacketError.Condition.item_not_found));
+            reply.setError(new PacketError(PacketError.Condition.item_not_found, PacketError.Type.cancel, "OS client unsupported"));
             sendPacket(reply);
             return;
         }
