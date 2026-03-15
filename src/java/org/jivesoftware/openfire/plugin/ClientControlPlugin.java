@@ -45,6 +45,7 @@ public class ClientControlPlugin implements Plugin {
 
     // Plugin Interface
 
+    @Override
     public void initializePlugin(PluginManager manager, File pluginDirectory) {
         taskEngine = TaskEngine.getInstance();
         sparkManager = new SparkManager(taskEngine);
@@ -56,13 +57,13 @@ public class ClientControlPlugin implements Plugin {
 
         fileTransferFilterManager = new FileTransferFilterManager();
         fileTransferFilterManager.start();
-
     }
 
     public FileTransferFilterManager getFileTransferFilterManager() {
         return fileTransferFilterManager;
     }
 
+    @Override
     public void destroyPlugin() {
         if (sparkManager != null) {
             sparkManager.stop();

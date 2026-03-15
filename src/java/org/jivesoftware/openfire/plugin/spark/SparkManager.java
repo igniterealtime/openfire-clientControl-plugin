@@ -114,10 +114,12 @@ public class SparkManager implements Component {
     }
 
 
+    @Override
     public String getName() {
         return "Features Component";
     }
 
+    @Override
     public String getDescription() {
         return "Allows for discovery of certain features.";
     }
@@ -129,6 +131,7 @@ public class SparkManager implements Component {
      *
      * @param packet the packet
      */
+    @Override
     public void processPacket(Packet packet) {
         if (packet instanceof IQ) {
             IQ iqPacket = (IQ)packet;
@@ -241,10 +244,12 @@ public class SparkManager implements Component {
         }
     }
 
+    @Override
     public void initialize(JID jid, ComponentManager componentManager) throws ComponentException {
         // Do nothing.
     }
 
+    @Override
     public void start() {
         // Do nothing.
     }
@@ -270,6 +275,7 @@ public class SparkManager implements Component {
      * Remove any resources SparkManager was using. This will allow
      * for a clean reload.
      */
+    @Override
     public void shutdown() {
         // Cleanup
         SessionEventDispatcher.removeListener(sessionEventListener);
@@ -614,6 +620,7 @@ public class SparkManager implements Component {
          *
          * @param session the newly created session.
          */
+        @Override
         public void sessionCreated(final Session session) {
             // Check to see if Spark is required.
             String clientsAllowed = JiveGlobals.getProperty("clients.allowed", "all");
@@ -636,18 +643,22 @@ public class SparkManager implements Component {
          *
          * @param session the session destroyed.
          */
+        @Override
         public void sessionDestroyed(Session session) {
 
         }
 
+        @Override
         public void resourceBound(Session session) {
             // Do nothing.
         }
 
+        @Override
         public void anonymousSessionCreated(Session session) {
             // Ignore.
         }
 
+        @Override
         public void anonymousSessionDestroyed(Session session) {
             // Ignore.
         }
