@@ -240,7 +240,7 @@
                 <%
                     for (Path clientFile : list) {
                         Date buildDate = Date.from(Files.getLastModifiedTime(clientFile).toInstant());
-                        Boolean isSelected = clientFile.getFileName().toString().equals(windowClient);
+                        Boolean isSelected = clientFile.getFileName().toString().equals(macClient);
                         request.setAttribute("fileName", clientFile.getFileName().toString());
                         request.setAttribute("selected", isSelected);
                         request.setAttribute("buildDate", buildDate);
@@ -286,7 +286,7 @@
                 <%
                     for (Path clientFile : list) {
                         Date buildDate = Date.from(Files.getLastModifiedTime(clientFile).toInstant());
-                        Boolean isSelected = clientFile.getFileName().toString().equals(windowClient);
+                        Boolean isSelected = clientFile.getFileName().toString().equals(linuxClient);
                         request.setAttribute("fileName", clientFile.getFileName().toString());
                         request.setAttribute("selected", isSelected);
                         request.setAttribute("buildDate", buildDate);
