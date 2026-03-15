@@ -17,15 +17,15 @@
      * Enumeration of possible clients.
      */
     enum Clients {
-        Spark("Spark", "spark", "http://www.igniterealtime.org/projects/spark/index.jsp", "images/client-icon_spark.gif"),
-        Adium("Adium", "libgaim", "http://www.adiumx.com/", "images/client-icon_adium.gif"),
-        Exodus("Exodus", "exodus", "http://exodus.jabberstudio.org/", "images/client-icon_exodus.gif"),
-        Pidgin("Pidgin", "pidgin", "http://www.pidgin.im/", "images/client-icon_pidgin.gif"),
-        IChat("IChat", "ichat", "http://www.mac.com/1/ichat.html", "images/client-icon_ichat.gif"),
-        JBother("JBother", "jbother", "http://www.jbother.org/", "images/client-icon_jbother.gif"),
-        Pandion("Pandion", "pandion", "http://www.pandion.be/", "images/client-icon_pandion.gif"),
-        PSI("PSI", "psi", "http://psi-im.org", "images/client-icon_psi.gif"),
-        Trillian("Trillian", "trillian", "http://www.ceruleanstudios.com/", "images/client-icon_trillian.gif");
+        Spark("Spark", "spark", "https://igniterealtime.org/projects/spark/", "images/client-icon_spark.gif"),
+        Adium("Adium", "libgaim", "https://adium.im/", "images/client-icon_adium.gif"),
+        Atalk("aTalk", "atalk", "https://cmeng-git.github.io/atalk/", "images/client-icon_atalk.png"),
+        Conversations("Conversations", "conversations", "https://conversations.im/", "images/client-icon_conversations.png"),
+        Gajim("Gajim", "gajim", "https://gajim.org/", "images/client-icon_gajim.png"),
+        Kaidan("Kaidan", "kaidan", "https://kaidan.im/", "images/client-icon_kaidan.png"),
+        Pidgin("Pidgin", "pidgin", "https://pidgin.im/", "images/client-icon_pidgin.gif"),
+        PSI("PSI", "psi", "https://psi-im.org", "images/client-icon_psi.gif"),
+        Trillian("Trillian", "trillian", "https://www.trillian.im/", "images/client-icon_trillian.gif");
 
         private String name;
         private String version;
