@@ -37,7 +37,7 @@ import org.xmpp.packet.PacketError;
 
 /**
  * Provides support for server administrators to control the global updating of the Jive Spark IM client.
- * (<a href="http://www.igniterealtime.org/projects/spark/index.jsp">Spark</a>).
+ * (<a href="https://igniterealtime.org/projects/spark/">Spark</a>).
  * <p>
  * The basic functionality is to query the server for the latest client
  * version and return that information. The version comparison is left to
@@ -123,7 +123,8 @@ public class SparkVersionManager implements Component {
         Element iq = packet.getChildElement();
 
         // Define default values
-        String os = iq.element("os").getText();
+        Element osElement = iq.element("os");
+        String os = osElement != null ? osElement.getText() : null;
 
         reply = IQ.createResultIQ(packet);
 
@@ -137,19 +138,16 @@ public class SparkVersionManager implements Component {
 
         Element sparkElement = reply.setChildElement("query", "jabber:iq:spark");
         String client = null;
-
-        // Handle Windows clients
-        if (os.equals("windows")) {
-            client = JiveGlobals.getProperty("spark.windows.client");
-        }
-        // Handle Mac clients.
-        else if (os.equals("mac")) {
-            client = JiveGlobals.getProperty("spark.mac.client");
-        }
-
-        // Handle Linux Client.
-        else if (os.equals("linux")) {
-            client = JiveGlobals.getProperty("spark.linux.client");
+        switch (os) {
+            case "windows": // Handle Windows clients
+                client = JiveGlobals.getProperty("spark.windows.client");
+                break;
+            case "mac":   // Handle Mac clients.
+                client = JiveGlobals.getProperty("spark.mac.client");
+                break;
+            case "linux": // Handle Linux Client.
+                client = JiveGlobals.getProperty("spark.linux.client");
+                break;
         }
 
         if (client != null) {
@@ -160,7 +158,7 @@ public class SparkVersionManager implements Component {
             int indexOfPeriod = versionNumber.indexOf(".");
 
             versionNumber = versionNumber.substring(0, indexOfPeriod);
-            versionNumber = versionNumber.replaceAll("_", ".");
+            versionNumber = versionNumber.replace("_", ".");
 
             sparkElement.addElement("version").setText(versionNumber);
 

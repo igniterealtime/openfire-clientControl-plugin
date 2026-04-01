@@ -48,7 +48,7 @@ public class SparkDownloadServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Handle Version Request. Only handle windows and mac version at this time.
+        // Handle Version Request
         final String clientBuild = request.getParameter("client");
         final String os = request.getParameter("os");
 
@@ -89,7 +89,7 @@ public class SparkDownloadServlet extends HttpServlet {
     }
 
     private void sendClientBuild(HttpServletResponse resp, final String clientBuild) throws IOException {
-        // Determine release location. All builds should be put into the document_root/releases directory
+        // Determine release location. All builds should be put into the C:\Program files\Openfire\enterprise\spark or /usr/share/enterprise/spark directory
         // and be named appropriately (ex. spark_1_0_0.exe, spark_1_0_1.dmg)
         Path clientFile = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").resolve(clientBuild);
 
