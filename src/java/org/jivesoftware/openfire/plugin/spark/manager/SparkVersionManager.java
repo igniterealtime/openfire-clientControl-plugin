@@ -17,9 +17,18 @@
 package org.jivesoftware.openfire.plugin.spark.manager;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.dom4j.Element;
 import org.jivesoftware.openfire.XMPPServer;
@@ -48,6 +57,7 @@ import org.xmpp.packet.PacketError;
 public class SparkVersionManager implements Component {
     
     private static final Logger Log = LoggerFactory.getLogger(SparkVersionManager.class);
+    private static final Map<Path, CachedChecksum> CHECKSUM_CACHE = new HashMap<>();
     
     private final ComponentManager componentManager;
     public static String SERVICE_NAME = "updater";
@@ -125,6 +135,8 @@ public class SparkVersionManager implements Component {
         // Define default values
         Element osElement = iq.element("os");
         String os = osElement != null ? osElement.getText() : null;
+        Element archElement = iq.element("arch");
+        String arch = archElement != null ? archElement.getTextTrim().toLowerCase(Locale.ROOT) : null;
 
         reply = IQ.createResultIQ(packet);
 
@@ -137,51 +149,47 @@ public class SparkVersionManager implements Component {
         }
 
         Element sparkElement = reply.setChildElement("query", "jabber:iq:spark");
-        String client = null;
-        switch (os) {
-            case "windows": // Handle Windows clients
-                client = JiveGlobals.getProperty("spark.windows.client");
-                break;
-            case "mac":   // Handle Mac clients.
-                client = JiveGlobals.getProperty("spark.mac.client");
-                break;
-            case "linux": // Handle Linux Client.
-                client = JiveGlobals.getProperty("spark.linux.client");
-                break;
-        }
+        String client = resolveClientPackage(os, arch);
 
-        if (client != null) {
-            int index = client.indexOf("_");
-
-            // Add version number
-            String versionNumber = client.substring(index + 1);
-            int indexOfPeriod = versionNumber.indexOf(".");
-
-            versionNumber = versionNumber.substring(0, indexOfPeriod);
-            versionNumber = versionNumber.replace("_", ".");
-
-            sparkElement.addElement("version").setText(versionNumber);
-
-            // Add updated time.
-            Path clientFile = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").resolve(client);
-            if (!Files.exists(clientFile)) {
+        if (client != null && !client.isBlank()) {
+            Path buildDir = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").toAbsolutePath().normalize();
+            Path clientFile = buildDir.resolve(client).normalize();
+            if (!clientFile.startsWith(buildDir) || !Files.isRegularFile(clientFile)) {
                 reply.setChildElement(packet.getChildElement().createCopy());
                 reply.setError(new PacketError(PacketError.Condition.item_not_found, PacketError.Type.cancel, "Client package not found"));
                 sendPacket(reply);
                 return;
             }
+
+            String fileName = clientFile.getFileName().toString();
+            String versionNumber = extractVersion(fileName);
+            if (versionNumber == null) {
+                reply.setChildElement(packet.getChildElement().createCopy());
+                reply.setError(new PacketError(PacketError.Condition.not_acceptable, PacketError.Type.modify, "Unable to determine package version from filename"));
+                sendPacket(reply);
+                return;
+            }
+            sparkElement.addElement("version").setText(versionNumber);
+
             try {
                 FileTime updatedTime = Files.getLastModifiedTime(clientFile);
                 sparkElement.addElement("updatedTime").setText(String.valueOf(updatedTime.toInstant().toEpochMilli()));
             } catch (IOException e) {
                 Log.info("Unable to determine the last-modified time of file {}", clientFile, e);
             }
+            sparkElement.addElement("fileName").setText(fileName);
+            try {
+                sparkElement.addElement("sha256").setText(sha256(clientFile));
+            } catch (Exception e) {
+                Log.warn("Unable to calculate SHA-256 for {}", clientFile, e);
+            }
+
             // Add download url
             String downloadURL = JiveGlobals.getProperty("spark.client.downloadURL");
             String server = XMPPServer.getInstance().getServerInfo().getXMPPDomain();
             downloadURL = downloadURL.replace("127.0.0.1", server);
 
-            sparkElement.addElement("downloadURL").setText(downloadURL + "?client=" + client);
+            sparkElement.addElement("downloadURL").setText(downloadURL + "?client=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
 
             String displayMessage = JiveGlobals.getProperty("spark.client.displayMessage");
             if (displayMessage != null && !displayMessage.trim().isEmpty()) {
@@ -196,6 +204,103 @@ public class SparkVersionManager implements Component {
         }
 
         sendPacket(reply);
+    }
+
+    static String architecturePropertyName(String os, String arch) {
+        if (os == null || arch == null) {
+            return null;
+        }
+        String normalizedOs = os.toLowerCase(Locale.ROOT);
+        String normalizedArch = arch.toLowerCase(Locale.ROOT);
+        if (!normalizedOs.equals("windows") && !normalizedOs.equals("mac") && !normalizedOs.equals("linux")) {
+            return null;
+        }
+        if (!normalizedArch.equals("x86") && !normalizedArch.equals("x64") && !normalizedArch.equals("arm64")) {
+            return null;
+        }
+        return "spark." + normalizedOs + "." + normalizedArch + ".client";
+    }
+
+    private static String resolveClientPackage(String os, String arch) {
+        String architectureProperty = architecturePropertyName(os, arch);
+        if (architectureProperty != null) {
+            String architectureClient = JiveGlobals.getProperty(architectureProperty);
+            if (architectureClient != null && !architectureClient.isBlank()) {
+                return architectureClient;
+            }
+        }
+        return JiveGlobals.getProperty("spark." + os + ".client");
+    }
+
+    private static final Pattern VERSION_PATTERN = Pattern.compile(
+        "(\\d+(?:[._]\\d+){1,3})(?:[-._]?((?:snapshot|alpha|beta|rc)\\d*))?",
+        Pattern.CASE_INSENSITIVE
+    );
+
+    static String extractVersion(String client) {
+        Matcher matcher = VERSION_PATTERN.matcher(client);
+        if (!matcher.find()) {
+            return null;
+        }
+        String version = matcher.group(1).replace('_', '.');
+        String qualifier = matcher.group(2);
+        if (qualifier == null) {
+            return version;
+        }
+        return version + "-" + qualifier.toLowerCase(Locale.ROOT);
+    }
+
+    static synchronized String sha256(Path path) throws Exception {
+        Path normalizedPath = path.toAbsolutePath().normalize();
+        for (int attempt = 0; attempt < 3; attempt++) {
+            long size = Files.size(normalizedPath);
+            FileTime modified = Files.getLastModifiedTime(normalizedPath);
+            CachedChecksum cached = CHECKSUM_CACHE.get(normalizedPath);
+            if (cached != null && cached.matches(size, modified)) {
+                return cached.sha256;
+            }
+
+            String sha256 = calculateSha256(normalizedPath);
+            long finalSize = Files.size(normalizedPath);
+            FileTime finalModified = Files.getLastModifiedTime(normalizedPath);
+            if (size == finalSize && modified.equals(finalModified)) {
+                CHECKSUM_CACHE.put(normalizedPath, new CachedChecksum(finalSize, finalModified, sha256));
+                return sha256;
+            }
+        }
+        throw new IOException("Spark client package changed while its SHA-256 was calculated: " + normalizedPath);
+    }
+
+    private static String calculateSha256(Path path) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (InputStream in = Files.newInputStream(path)) {
+            byte[] buffer = new byte[64 * 1024];
+            int read;
+            while ((read = in.read(buffer)) >= 0) {
+                digest.update(buffer, 0, read);
+            }
+        }
+        StringBuilder result = new StringBuilder(64);
+        for (byte value : digest.digest()) {
+            result.append(String.format("%02x", value));
+        }
+        return result.toString();
+    }
+
+    private static class CachedChecksum {
+        private final long size;
+        private final FileTime modified;
+        private final String sha256;
+
+        private CachedChecksum(long size, FileTime modified, String sha256) {
+            this.size = size;
+            this.modified = modified;
+            this.sha256 = sha256;
+        }
+
+        private boolean matches(long size, FileTime modified) {
+            return this.size == size && this.modified.equals(modified);
+        }
     }
 
     private void handleDiscoItems(IQ packet) {
