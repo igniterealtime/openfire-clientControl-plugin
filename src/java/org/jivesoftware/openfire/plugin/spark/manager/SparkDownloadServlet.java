@@ -89,21 +89,26 @@ public class SparkDownloadServlet extends HttpServlet {
     }
 
     private void sendClientBuild(HttpServletResponse resp, final String clientBuild) throws IOException {
-        // Determine release location. All builds should be put into the C:\Program files\Openfire\enterprise\spark or /usr/share/enterprise/spark directory
-        // and be named appropriately (ex. spark_1_0_0.exe, spark_1_0_1.dmg)
-        Path clientFile = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").resolve(clientBuild);
+        final Path buildDir = JiveGlobals.getHomePath().resolve("enterprise").resolve("spark").toAbsolutePath().normalize();
+        final Path clientFile = buildDir.resolve(Path.of(clientBuild).getFileName()).normalize();
+        if (!clientFile.startsWith(buildDir) || !Files.isRegularFile(clientFile)) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Spark client package not found");
+            return;
+        }
 
-        // Set content size
         resp.setContentType("application/octet-stream");
-        resp.setHeader("Content-Disposition", "attachment; filename=" + clientBuild);
-        resp.setContentLength((int)Files.size(clientFile));
+        String fileName = clientFile.getFileName().toString()
+            .replace('\r', '_')
+            .replace('\n', '_')
+            .replace('"', '_');
+        resp.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        resp.setContentLengthLong(Files.size(clientFile));
+        resp.setHeader("X-Content-Type-Options", "nosniff");
 
-        // Open the file and output streams
         try (final InputStream in = Files.newInputStream(clientFile);
              final OutputStream out = resp.getOutputStream())
         {
-            // Copy the contents of the file to the output stream
-            byte[] buf = new byte[1024];
+            byte[] buf = new byte[64 * 1024];
             int count;
             while ((count = in.read(buf)) >= 0) {
                 out.write(buf, 0, count);
